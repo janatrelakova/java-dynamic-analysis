@@ -7,12 +7,12 @@
     <groupId>cz.muni.fi.xtrelak</groupId>
     <artifactId>dynamic-analysis</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.outputDirectory>target/classes</project.build.outputDirectory>
     </properties>
 
     <build>
@@ -32,6 +32,11 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/injector.xml</descriptor>
                             </descriptors>
+                            <archive>
+                                <manifestEntries>
+                                    <Main-Class>cz/muni/fi/xtrelak/injector/Injector</Main-Class> <!-- Set your main class here -->
+                                </manifestEntries>
+                            </archive>
                         </configuration>
                     </execution>
                     <!-- Assembly for endpointsScraper JAR -->
@@ -45,6 +50,11 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/scraper.xml</descriptor>
                             </descriptors>
+                            <archive>
+                                <manifestEntries>
+                                    <Main-Class>cz/muni/fi/xtrelak/scraper/Scraper</Main-Class> <!-- Set your main class here -->
+                                </manifestEntries>
+                            </archive>
                         </configuration>
                     </execution>
 
@@ -59,6 +69,11 @@
                             <descriptors>
                                 <descriptor>src/main/assembly/invoker.xml</descriptor>
                             </descriptors>
+                            <archive>
+                                <manifestEntries>
+                                    <Main-Class>cz/muni/fi/xtrelak/invoker/Invoker</Main-Class> <!-- Set your main class here -->
+                                </manifestEntries>
+                            </archive>
                         </configuration>
                     </execution>
                 </executions>
