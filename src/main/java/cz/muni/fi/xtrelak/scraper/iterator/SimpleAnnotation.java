@@ -26,14 +26,15 @@ public class SimpleAnnotation implements Annotation {
         var methodName = method.getNameAsString();
         var queryParams = Annotation.extractQueryParams(method);
         List<String> uri = extractPath();
+        var endpointPrefix = Annotation.getEndpointPrefix(method);
         HTTP_METHOD httpMethod = HTTP_METHOD.convertAnnotationToHttpMethod(annotation.getNameAsString());
-        System.out.println("SIMPLE ANN. Method: " + httpMethod);
-        return uri.stream().map(u -> new Endpoint(httpMethod, u, methodName, queryParams)).toList();
+        return uri.stream().map(u -> new Endpoint(httpMethod, endpointPrefix + u, methodName, queryParams)).toList();
     }
 
     // Extract the path value from the annotation
     private List<String> extractPath() {
-        var path = annotation.getMemberValue().toString().describeConstable().get();
+        var value = annotation.getMemberValue().toString().describeConstable();
+        var path = value.orElseThrow();
         if (path.startsWith("{")) {
             return Arrays.stream(
                     path.substring(1, path.length() - 1)

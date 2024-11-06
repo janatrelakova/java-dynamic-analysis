@@ -2,6 +2,7 @@ package cz.muni.fi.xtrelak.scraper.iterator;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
@@ -13,7 +14,7 @@ import java.util.List;
 // Visitor to extract endpoint information from method declarations
 public class MethodVisitor extends VoidVisitorAdapter<Void> {
 
-    private List<Endpoint> endpoints = null;
+    private final List<Endpoint> endpoints;
 
     public MethodVisitor(List<Endpoint> endpoints) {
         this.endpoints = endpoints;
@@ -37,6 +38,11 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
                 } else if (isNormalAnnotationExpr(annotation)) {
                     var obj = new NormalAnnotation(annotation);
                     endpoints.addAll(obj.extractHttpConfiguration(method));
+                } else if (isMarkerAnnotationExpr(annotation)) {
+                    var obj = new MarkerAnnotation(annotation);
+                    endpoints.addAll(obj.extractHttpConfiguration(method));
+                } else {
+                    throw new IllegalAccessException("Invalid annotation type");
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
@@ -50,5 +56,9 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
 
     private static boolean isSingleMemberAnnotationExpr(AnnotationExpr annotation) {
         return annotation instanceof SingleMemberAnnotationExpr;
+    }
+
+    private static boolean isMarkerAnnotationExpr(AnnotationExpr annotation) {
+        return annotation instanceof MarkerAnnotationExpr;
     }
 }

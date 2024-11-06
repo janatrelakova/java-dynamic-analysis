@@ -29,12 +29,12 @@ public class NormalAnnotation implements Annotation {
     @Override
     public List<Endpoint> extractHttpConfiguration(MethodDeclaration method) throws IllegalAccessException {
         var queryParams = Annotation.extractQueryParams(method);
-        var paths = extractPath();
+        var prefix = Annotation.getEndpointPrefix(method);
+        var paths = extractPath().stream().map(p -> prefix + p).toList();
         var methodName = method.getNameAsString();
         var methods = extractMethods();
         var result = new ArrayList<Endpoint>();
         for (var m : methods) {
-            System.out.println("NORMAL ANN. Method: " + m);
             for (var p : paths) {
                 result.add(new Endpoint(m, p, methodName, queryParams));
             }
@@ -63,6 +63,14 @@ public class NormalAnnotation implements Annotation {
         if (methodDefinition.isArrayInitializerExpr()) {
             var values = methodDefinition.asArrayInitializerExpr().getValues();
             methods = values.stream().map(v -> convertAnnotationToHttpMethod(v.toString())).toList();
+        } else if (methodDefinition.isFieldAccessExpr()) {
+            var value = methodDefinition.toString();
+
+            var method = convertAnnotationToHttpMethod(value);
+            if (method == null) {
+                throw new IllegalAccessException("Invalid HTTP method");
+            }
+            methods = List.of(method);
         } else {
             var value = methodDefinition.asNameExpr().getNameAsString();
             var method = convertAnnotationToHttpMethod(value);
