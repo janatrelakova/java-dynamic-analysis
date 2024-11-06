@@ -15,4 +15,11 @@
             <outputDirectory>/</outputDirectory>
         </fileSet>
     </fileSets>
+    <dependencySets>
+        <dependencySet>
+            <outputDirectory>/</outputDirectory>
+            <useTransitiveDependencies>true</useTransitiveDependencies>
+            <unpack>true</unpack>
+        </dependencySet>
+    </dependencySets>
 </assembly>
