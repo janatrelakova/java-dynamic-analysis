@@ -4,7 +4,6 @@ public class User {
     private String name;
     private int age;
 
-    // Getters and Setters
     public String getName() {
         return name;
     }
