@@ -8,13 +8,16 @@ public class EndpointOutput
 {
     public String url;
     public HTTP_METHOD httpMethod;
+    public String body;
 
-    public EndpointOutput(HTTP_METHOD httpMethod, String uri, List<String> queryParams) {
+    public EndpointOutput(HTTP_METHOD httpMethod, String uri, List<String> queryParams, String body) {
         this.httpMethod = httpMethod;
         if (queryParams == null || queryParams.isEmpty()) {
             this.url = uri;
         } else {
             this.url = uri + "?" + String.join("&", queryParams);
         }
+        this.body = body;
     }
 }
+

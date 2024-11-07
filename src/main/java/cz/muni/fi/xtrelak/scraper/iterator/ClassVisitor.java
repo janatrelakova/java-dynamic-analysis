@@ -23,7 +23,7 @@ public class ClassVisitor extends GenericVisitorAdapter<ClassType, Void> {
         return new ClassType(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods);
     }
 
-    static String getEndpointPrefix(ClassOrInterfaceDeclaration c) {
+    private static String getEndpointPrefix(ClassOrInterfaceDeclaration c) {
         var classAnnotations = c.getAnnotations();
         for (AnnotationExpr annotation : classAnnotations) {
             if (annotation.getNameAsString().equals("RequestMapping")) {

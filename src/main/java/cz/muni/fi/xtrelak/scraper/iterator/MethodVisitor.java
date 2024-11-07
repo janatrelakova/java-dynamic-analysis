@@ -1,10 +1,12 @@
 package cz.muni.fi.xtrelak.scraper.iterator;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 import cz.muni.fi.xtrelak.scraper.Endpoint;
 import cz.muni.fi.xtrelak.scraper.HTTP_METHOD;
@@ -20,7 +22,8 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
 
         var methodAnnotations = method.getAnnotations();
         var queryParams = Annotation.extractQueryParams(method);
-        var body = Annotation.extractBody(method);
+        var body = extractBodyType(method);
+        var bodyString = body == null ? null : body.asString();
         var endpoints = new ArrayList<Endpoint>();
         for (AnnotationExpr annotation : methodAnnotations) {
             if (!HTTP_METHOD.validMethods.contains(annotation.getNameAsString())) {
@@ -28,7 +31,7 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
             }
             endpoints.addAll(parseEndpointFromAnnotation(annotation, method));
         }
-        return new MethodMetadata(endpoints, "", "", queryParams);
+        return new MethodMetadata(endpoints, bodyString, "", queryParams);
     }
 
     private static List<Endpoint> parseEndpointFromAnnotation(AnnotationExpr annotation, MethodDeclaration method) {
@@ -48,6 +51,11 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Type extractBodyType(MethodDeclaration method) {
+        var requestBodyParameter = method.getParameters().stream().filter(parameter -> parameter.getAnnotationByName("RequestBody").isPresent()).findFirst();
+        return requestBodyParameter.map(Parameter::getType).orElse(null);
     }
 
     private static boolean isNormalAnnotationExpr(AnnotationExpr annotation) {

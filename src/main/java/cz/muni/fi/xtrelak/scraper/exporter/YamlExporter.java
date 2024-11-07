@@ -1,6 +1,5 @@
 package cz.muni.fi.xtrelak.scraper.exporter;
 
-import cz.muni.fi.xtrelak.scraper.Endpoint;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.nodes.Tag;
@@ -26,6 +25,7 @@ public class YamlExporter {
 
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK); // For readable block style YAML
         options.setPrettyFlow(true);
+
         Representer representer = new Representer(options);
         representer.addClassTag(EndpointOutput.class, Tag.MAP);
         Yaml yaml = new Yaml(representer, options);

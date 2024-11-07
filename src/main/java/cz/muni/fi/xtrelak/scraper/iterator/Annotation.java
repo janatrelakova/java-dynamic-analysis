@@ -20,16 +20,4 @@ public interface Annotation {
         }));
         return params;
     }
-
-    static Map<String, String> extractBody(MethodDeclaration method) {
-        var body = new HashMap<String, String>();
-        method.getParameters().forEach(parameter -> parameter.getAnnotationByName("RequestBody").ifPresent(_ -> {
-            String paramName = parameter.getNameAsString();
-            var type = parameter;
-            body.put(paramName, "type");
-        }));
-        return body;
-    }
-
-
 }
