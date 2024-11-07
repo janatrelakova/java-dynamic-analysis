@@ -6,7 +6,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.utils.SourceRoot;
 import cz.muni.fi.xtrelak.scraper.exporter.EndpointOutput;
 import cz.muni.fi.xtrelak.scraper.exporter.YamlExporter;
-import cz.muni.fi.xtrelak.scraper.iterator.ClassType;
+import cz.muni.fi.xtrelak.scraper.iterator.ClassMetadata;
 import cz.muni.fi.xtrelak.scraper.iterator.ClassVisitor;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class Scraper {
         // Parse all Java files in the directory
         List<ParseResult<CompilationUnit>> cus = sourceRoot.tryToParse("src/main/java");
 
-        var classes = new ArrayList<ClassType>();
+        var classes = new ArrayList<ClassMetadata>();
         var classVisitor = new ClassVisitor();
 
         cus.forEach(cu -> cu.ifSuccessful(c -> classes.add(c.accept(classVisitor, null))));

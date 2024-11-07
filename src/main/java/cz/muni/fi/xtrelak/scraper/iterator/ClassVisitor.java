@@ -7,9 +7,9 @@ import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 
 import java.util.ArrayList;
 
-public class ClassVisitor extends GenericVisitorAdapter<ClassType, Void> {
+public class ClassVisitor extends GenericVisitorAdapter<ClassMetadata, Void> {
     @Override
-    public ClassType visit(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration compilationUnit, Void arg) {
+    public ClassMetadata visit(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration compilationUnit, Void arg) {
         super.visit(compilationUnit, arg);
         var parentNode = compilationUnit.getParentNode().orElseThrow();
         var imports = parentNode.findAll(com.github.javaparser.ast.ImportDeclaration.class).stream().map(NodeWithName::getNameAsString).toList();
@@ -18,7 +18,7 @@ public class ClassVisitor extends GenericVisitorAdapter<ClassType, Void> {
         var methods = new ArrayList<MethodMetadata>();
         var methodVisitor = new MethodVisitor();
         compilationUnit.getMethods().forEach(cu -> methods.add(cu.accept(methodVisitor, null)));
-        return new ClassType(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods);
+        return new ClassMetadata(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods);
     }
 
     private static String getEndpointPrefix(ClassOrInterfaceDeclaration c) {
