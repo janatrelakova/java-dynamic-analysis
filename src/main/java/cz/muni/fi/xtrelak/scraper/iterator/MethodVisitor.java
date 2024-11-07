@@ -24,6 +24,8 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
         var queryParams = Annotation.extractQueryParams(method);
         var body = extractBodyType(method);
         var bodyString = body == null ? null : body.asString();
+        var formBody = extractFormBodyType(method);
+        var formBodyString = formBody == null ? null : formBody.asString();
         var endpoints = new ArrayList<Endpoint>();
         for (AnnotationExpr annotation : methodAnnotations) {
             if (!HTTP_METHOD.validMethods.contains(annotation.getNameAsString())) {
@@ -31,7 +33,7 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
             }
             endpoints.addAll(parseEndpointFromAnnotation(annotation, method));
         }
-        return new MethodMetadata(endpoints, bodyString, "", queryParams);
+        return new MethodMetadata(endpoints, bodyString, formBodyString, queryParams);
     }
 
     private static List<Endpoint> parseEndpointFromAnnotation(AnnotationExpr annotation, MethodDeclaration method) {
@@ -55,6 +57,11 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
 
     private static Type extractBodyType(MethodDeclaration method) {
         var requestBodyParameter = method.getParameters().stream().filter(parameter -> parameter.getAnnotationByName("RequestBody").isPresent()).findFirst();
+        return requestBodyParameter.map(Parameter::getType).orElse(null);
+    }
+
+    static Type extractFormBodyType(MethodDeclaration method) {
+        var requestBodyParameter = method.getParameters().stream().filter(parameter -> parameter.getAnnotationByName("ModelAttribute").isPresent()).findFirst();
         return requestBodyParameter.map(Parameter::getType).orElse(null);
     }
 

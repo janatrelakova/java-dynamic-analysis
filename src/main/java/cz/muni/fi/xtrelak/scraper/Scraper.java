@@ -33,15 +33,25 @@ public class Scraper {
         var endpoints = new ArrayList<EndpointOutput>();
 
         for (var c : classes) {
+            if (c == null) {
+                continue;
+            }
             var urlPrefix = c.getEndpointPrefix();
             for (var m : c.getMethods()) {
                 String bodyFields = null;
+                String bodyFormFields = null;
                 if (m.body() != null) {
                     List<FieldDeclaration> q = getBodyParameters(m.body(), c.getImports(), c.getPackageName(), sourceRoot);
                     bodyFields = joinBodyFields(q);
                 }
+
+                if (m.formBody() != null) {
+                    List<FieldDeclaration> q = getBodyParameters(m.formBody(), c.getImports(), c.getPackageName(), sourceRoot);
+                    bodyFormFields = joinBodyFormFields(q);
+                }
+
                 for (var e : m.endpoints()) {
-                    endpoints.add(new EndpointOutput(e.getHttpMethod(), urlPrefix + e.getUri(), m.queryParams(), bodyFields));
+                    endpoints.add(new EndpointOutput(e.getHttpMethod(), urlPrefix + e.getUri(), m.queryParams(), bodyFields, bodyFormFields));
                 }
             }
         }
@@ -55,22 +65,26 @@ public class Scraper {
                 .map(e -> e.getNameAsString() + ": " + e.getType()).collect(Collectors.joining(", "));
     }
 
+    private static String joinBodyFormFields(List<FieldDeclaration> q) {
+        return q.stream().map(FieldDeclaration::getVariables).flatMap(e -> e.getFirst().stream())
+                .map(e -> e.getNameAsString() + "=" + e.getType()).collect(Collectors.joining("&"));
+    }
+
     private static List<FieldDeclaration> getBodyParameters(String body, List<String> imports, String packageName, SourceRoot sr) {
         var imported = imports.stream().filter(i -> i.endsWith(body)).findFirst();
         if (imported.isPresent()) {
             var importString = imported.orElseThrow();
             var pkg = importString.substring(0, importString.lastIndexOf('.'));
-            var file = body + ".java";
-            return getFieldsOfClass(file, pkg, body, sr);
+            return getFieldsOfClass(pkg, body, sr);
         }
 
-        return getFieldsOfClass(body, packageName, body, sr);
+        return getFieldsOfClass(packageName, body, sr);
     }
 
-    private static List<FieldDeclaration> getFieldsOfClass(String filename, String packageName, String body, SourceRoot sr) {
+    private static List<FieldDeclaration> getFieldsOfClass(String packageName, String body, SourceRoot sr) {
         var location = "src/main/java/" + packageName;
         try {
-            var classOfBody = sr.tryToParse(location, filename);
+            var classOfBody = sr.tryToParse(location, body + ".java");
             if (classOfBody.isSuccessful()) {
                 var parsedClass = classOfBody.getResult().orElseThrow().getClassByName(body).orElseThrow();
                 return parsedClass.getFields();

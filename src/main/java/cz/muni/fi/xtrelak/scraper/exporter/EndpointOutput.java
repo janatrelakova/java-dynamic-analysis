@@ -9,8 +9,9 @@ public class EndpointOutput
     public String url;
     public HTTP_METHOD httpMethod;
     public String body;
+    public String formBody;
 
-    public EndpointOutput(HTTP_METHOD httpMethod, String uri, List<String> queryParams, String body) {
+    public EndpointOutput(HTTP_METHOD httpMethod, String uri, List<String> queryParams, String body, String formBody) {
         this.httpMethod = httpMethod;
         if (queryParams == null || queryParams.isEmpty()) {
             this.url = uri;
@@ -18,6 +19,7 @@ public class EndpointOutput
             this.url = uri + "?" + String.join("&", queryParams);
         }
         this.body = body;
+        this.formBody = formBody;
     }
 }
 
