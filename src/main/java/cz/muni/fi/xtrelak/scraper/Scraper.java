@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 public class Scraper {
 
     public static void main(String[] args) throws Exception {
-        // Define the path to your source code directory (absolute path)
+        // Path to the root of the project
         String projectPath = args[0];
         SourceRoot sourceRoot = new SourceRoot(Paths.get(projectPath));
 
-        // Parse all Java files in the directory
+        // Analysis will be done in src/main/java directory only
         List<ParseResult<CompilationUnit>> cus = sourceRoot.tryToParse("src/main/java");
 
         var classes = new ArrayList<ClassMetadata>();

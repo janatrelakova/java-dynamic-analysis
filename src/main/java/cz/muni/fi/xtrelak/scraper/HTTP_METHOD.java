@@ -12,7 +12,7 @@ public enum HTTP_METHOD {
     public static final List<String> validMethods =
             List.of("GetMapping", "PostMapping", "PutMapping", "DeleteMapping", "RequestMapping");
 
-    // Convert the annotation name to standard HTTP methods (GET, POST, PUT, DELETE)
+    // Convert the annotation name to standard HTTP methods (GET, POST, PUT, PATCH, DELETE)
     public static HTTP_METHOD convertAnnotationToHttpMethod(String annotationName) {
         return switch (annotationName) {
             case "GetMapping", "RequestMethod.GET" -> HTTP_METHOD.GET;
