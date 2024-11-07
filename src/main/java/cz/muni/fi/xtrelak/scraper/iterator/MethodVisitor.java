@@ -21,7 +21,7 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
         super.visit(method, arg);
 
         var methodAnnotations = method.getAnnotations();
-        var queryParams = Annotation.extractQueryParams(method);
+        var queryParams = extractQueryParams(method);
         var body = extractBodyType(method);
         var bodyString = body == null ? null : body.asString();
         var formBody = extractFormBodyType(method);
@@ -53,6 +53,16 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static List<String> extractQueryParams(MethodDeclaration method) {
+        var params = new ArrayList<String>();
+        method.getParameters().forEach(parameter -> parameter.getAnnotationByName("RequestParam").ifPresent(_ -> {
+            String paramName = parameter.getNameAsString();
+            String type = parameter.getType().asString();
+            params.add(paramName + "={" + type + "}");
+        }));
+        return params;
     }
 
     private static Type extractBodyType(MethodDeclaration method) {
