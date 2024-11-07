@@ -11,7 +11,6 @@ import cz.muni.fi.xtrelak.scraper.HTTP_METHOD;
 
 import java.util.List;
 
-// Visitor to extract endpoint information from method declarations
 public class MethodVisitor extends VoidVisitorAdapter<Void> {
 
     private final List<Endpoint> endpoints;

@@ -5,7 +5,7 @@ import java.util.List;
 public class Endpoint {
 
     private final HTTP_METHOD httpMethod;
-    private final String uri;
+    private String uri;
     private final String methodName;
     private List<String> queryParams;
 
@@ -34,5 +34,9 @@ public class Endpoint {
 
     public List<String> getQueryParams() {
         return queryParams;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 }

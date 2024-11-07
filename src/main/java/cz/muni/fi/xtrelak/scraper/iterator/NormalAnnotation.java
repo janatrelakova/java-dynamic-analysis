@@ -28,8 +28,7 @@ public class NormalAnnotation implements Annotation {
 
     @Override
     public List<Endpoint> extractHttpConfiguration(MethodDeclaration method) throws IllegalAccessException {
-        var prefix = Annotation.getEndpointPrefix(method);
-        var paths = extractPath().stream().map(p -> prefix + p).toList();
+        var paths = extractPath();
         var methodName = method.getNameAsString();
         var methods = extractMethods();
         var result = new ArrayList<Endpoint>();

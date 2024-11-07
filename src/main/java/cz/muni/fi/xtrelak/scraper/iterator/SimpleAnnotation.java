@@ -25,9 +25,8 @@ public class SimpleAnnotation implements Annotation {
     public List<Endpoint> extractHttpConfiguration(MethodDeclaration method) {
         var methodName = method.getNameAsString();
         List<String> uri = extractPath();
-        var endpointPrefix = Annotation.getEndpointPrefix(method);
         HTTP_METHOD httpMethod = HTTP_METHOD.convertAnnotationToHttpMethod(annotation.getNameAsString());
-        return uri.stream().map(u -> new Endpoint(httpMethod, endpointPrefix + u, methodName)).toList();
+        return uri.stream().map(u -> new Endpoint(httpMethod, u, methodName)).toList();
     }
 
     // Extract the path value from the annotation

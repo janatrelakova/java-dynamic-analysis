@@ -4,7 +4,6 @@ import com.github.javaparser.utils.SourceRoot;
 import cz.muni.fi.xtrelak.scraper.exporter.YamlExporter;
 import cz.muni.fi.xtrelak.scraper.iterator.ClassType;
 import cz.muni.fi.xtrelak.scraper.iterator.ClassVisitor;
-import cz.muni.fi.xtrelak.scraper.iterator.MethodVisitor;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -22,9 +21,7 @@ public class Scraper {
         var classes = new ArrayList<ClassType>();
         var classVisitor = new ClassVisitor();
 
-        sourceRoot.getCompilationUnits().forEach(cu -> {
-            classes.add(cu.accept(classVisitor, null));
-        });
+        sourceRoot.getCompilationUnits().forEach(cu -> classes.add(cu.accept(classVisitor, null)));
 
         var result = classes.stream().map(ClassType::getEndpoints).flatMap(Collection::stream).toList();
         var exporter = new YamlExporter();
