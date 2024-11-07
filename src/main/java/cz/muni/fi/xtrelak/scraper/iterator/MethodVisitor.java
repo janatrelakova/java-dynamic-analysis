@@ -5,40 +5,30 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
-import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 import cz.muni.fi.xtrelak.scraper.Endpoint;
 import cz.muni.fi.xtrelak.scraper.HTTP_METHOD;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MethodVisitor extends VoidVisitorAdapter<Void> {
-
-    private final List<Endpoint> endpoints;
-
-    public MethodVisitor(List<Endpoint> endpoints) {
-        this.endpoints = endpoints;
-    }
+public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
 
     @Override
-    public void visit(MethodDeclaration method, Void arg) {
+    public MethodMetadata visit(MethodDeclaration method, Void arg) {
         super.visit(method, arg);
 
         var methodAnnotations = method.getAnnotations();
-
+        var queryParams = Annotation.extractQueryParams(method);
+        var body = Annotation.extractBody(method);
+        var endpoints = new ArrayList<Endpoint>();
         for (AnnotationExpr annotation : methodAnnotations) {
             if (!HTTP_METHOD.validMethods.contains(annotation.getNameAsString())) {
                 continue;
             }
-
-            var queryParams = Annotation.extractQueryParams(method);
-            var body = Annotation.extractBody(method);
-            var endpoints = parseEndpointFromAnnotation(annotation, method);
-            for (Endpoint endpoint : endpoints) {
-                endpoint.setQueryParams(queryParams);
-            }
-
-            this.endpoints.addAll(endpoints);
+            endpoints.addAll(parseEndpointFromAnnotation(annotation, method));
         }
+        return new MethodMetadata(endpoints, "", "", queryParams);
     }
 
     private static List<Endpoint> parseEndpointFromAnnotation(AnnotationExpr annotation, MethodDeclaration method) {

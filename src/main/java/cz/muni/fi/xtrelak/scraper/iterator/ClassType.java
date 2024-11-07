@@ -9,18 +9,28 @@ public class ClassType {
     private final String packageName;
     private final String endpointPrefix;
     private final List<String> imports;
-    private final List<Endpoint> endpoints;
 
-    public List<Endpoint> getEndpoints() {
-        return endpoints;
+    public String getEndpointPrefix() {
+        return endpointPrefix;
     }
 
-    public ClassType(String name, String packageName, String endpointPrefix, List<String> imports, List<Endpoint> endpoints) {
+    public List<String> getImports() {
+        return imports;
+    }
+
+    public List<MethodMetadata> getMethods() {
+        return methods;
+    }
+
+    private final List<MethodMetadata> methods;
+
+
+    public ClassType(String name, String packageName, String endpointPrefix, List<String> imports, List<MethodMetadata> methods) {
         this.name = name;
         this.packageName = packageName;
         this.endpointPrefix = endpointPrefix;
         this.imports = imports;
-        this.endpoints = endpoints;
+        this.methods = methods;
     }
 
     public String getName() {

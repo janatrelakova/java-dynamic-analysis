@@ -1,9 +1,11 @@
 package cz.muni.fi.xtrelak.scraper;
 
 import com.github.javaparser.utils.SourceRoot;
+import cz.muni.fi.xtrelak.scraper.exporter.EndpointOutput;
 import cz.muni.fi.xtrelak.scraper.exporter.YamlExporter;
 import cz.muni.fi.xtrelak.scraper.iterator.ClassType;
 import cz.muni.fi.xtrelak.scraper.iterator.ClassVisitor;
+import cz.muni.fi.xtrelak.scraper.iterator.MethodMetadata;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -23,8 +25,18 @@ public class Scraper {
 
         sourceRoot.getCompilationUnits().forEach(cu -> classes.add(cu.accept(classVisitor, null)));
 
-        var result = classes.stream().map(ClassType::getEndpoints).flatMap(Collection::stream).toList();
+        var endpoints = new ArrayList<EndpointOutput>();
+
+        for (var c : classes) {
+            var urlPrefix = c.getEndpointPrefix();
+            for (var m : c.getMethods()) {
+                for (var e : m.endpoints()) {
+                    endpoints.add(new EndpointOutput(e.getHttpMethod(), urlPrefix + e.getUri(), m.queryParams()));
+                }
+            }
+        }
+
         var exporter = new YamlExporter();
-        exporter.export(result);
+        exporter.export(endpoints);
     }
 }

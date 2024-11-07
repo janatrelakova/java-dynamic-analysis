@@ -11,11 +11,10 @@ public class EndpointOutput
 
     public EndpointOutput(HTTP_METHOD httpMethod, String uri, List<String> queryParams) {
         this.httpMethod = httpMethod;
-        if (queryParams.isEmpty()) {
+        if (queryParams == null || queryParams.isEmpty()) {
             this.url = uri;
         } else {
             this.url = uri + "?" + String.join("&", queryParams);
         }
     }
-
 }

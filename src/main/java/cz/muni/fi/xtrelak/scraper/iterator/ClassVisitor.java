@@ -4,7 +4,6 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
-import cz.muni.fi.xtrelak.scraper.Endpoint;
 
 import java.util.ArrayList;
 
@@ -16,13 +15,12 @@ public class ClassVisitor extends GenericVisitorAdapter<ClassType, Void> {
         var imports = parentNode.findAll(com.github.javaparser.ast.ImportDeclaration.class).stream().map(NodeWithName::getNameAsString).toList();
         var packageName = parentNode.findFirst(com.github.javaparser.ast.PackageDeclaration.class).orElseThrow().getNameAsString();
         var endpointPrefix = getEndpointPrefix(compilationUnit);
-        var classEndpoints = new ArrayList<Endpoint>();
-        var methodVisitor = new MethodVisitor(classEndpoints);
+        var methods = new ArrayList<MethodMetadata>();
+        var methodVisitor = new MethodVisitor();
         compilationUnit.getMethods().forEach(cu -> {
-            cu.accept(methodVisitor, null);
+            methods.add(cu.accept(methodVisitor, null));
         });
-        classEndpoints.forEach(endpoint -> endpoint.setUri(endpointPrefix + endpoint.getUri()));
-        return new ClassType(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, classEndpoints);
+        return new ClassType(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods);
     }
 
     static String getEndpointPrefix(ClassOrInterfaceDeclaration c) {
