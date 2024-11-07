@@ -61,7 +61,7 @@ public class Scraper {
 
     private static String joinBodyFields(List<FieldDeclaration> q) {
         return q.stream().map(FieldDeclaration::getVariables).flatMap(e -> e.getFirst().stream())
-                .map(e -> e.getNameAsString() + ": " + e.getType()).collect(Collectors.joining(", "));
+                .map(e -> e.getNameAsString() + ": " + e.getType()).collect(Collectors.joining("\n"));
     }
 
     private static String joinBodyFormFields(List<FieldDeclaration> q) {
