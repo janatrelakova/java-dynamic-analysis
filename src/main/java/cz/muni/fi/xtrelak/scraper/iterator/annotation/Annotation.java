@@ -1,4 +1,4 @@
-package cz.muni.fi.xtrelak.scraper.iterator;
+package cz.muni.fi.xtrelak.scraper.iterator.annotation;
 
 import com.github.javaparser.ast.body.MethodDeclaration;
 import cz.muni.fi.xtrelak.scraper.Endpoint;

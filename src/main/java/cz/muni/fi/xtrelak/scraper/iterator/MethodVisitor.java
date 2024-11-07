@@ -10,6 +10,9 @@ import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 import cz.muni.fi.xtrelak.scraper.Endpoint;
 import cz.muni.fi.xtrelak.scraper.HTTP_METHOD;
+import cz.muni.fi.xtrelak.scraper.iterator.annotation.MarkerAnnotation;
+import cz.muni.fi.xtrelak.scraper.iterator.annotation.NormalAnnotation;
+import cz.muni.fi.xtrelak.scraper.iterator.annotation.SimpleAnnotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +24,6 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
         super.visit(method, arg);
 
         var methodAnnotations = method.getAnnotations();
-        var queryParams = extractQueryParams(method);
-        var body = extractBodyType(method);
-        var bodyString = body == null ? null : body.asString();
-        var formBody = extractFormBodyType(method);
-        var formBodyString = formBody == null ? null : formBody.asString();
         var endpoints = new ArrayList<Endpoint>();
         for (AnnotationExpr annotation : methodAnnotations) {
             if (!HTTP_METHOD.validMethods.contains(annotation.getNameAsString())) {
@@ -33,6 +31,16 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
             }
             endpoints.addAll(parseEndpointFromAnnotation(annotation, method));
         }
+
+        if (endpoints.isEmpty()) {
+            return new MethodMetadata(endpoints, null, null, null);
+        }
+        var queryParams = extractQueryParams(method);
+        var body = extractBodyType(method);
+        var bodyString = body == null ? null : body.asString();
+        var formBody = extractFormBodyType(method);
+        var formBodyString = formBody == null ? null : formBody.asString();
+
         return new MethodMetadata(endpoints, bodyString, formBodyString, queryParams);
     }
 
