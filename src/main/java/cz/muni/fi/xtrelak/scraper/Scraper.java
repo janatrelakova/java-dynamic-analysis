@@ -50,7 +50,7 @@ public class Scraper {
                 }
 
                 for (var e : m.endpoints()) {
-                    endpoints.add(new EndpointOutput(e.getHttpMethod(), urlPrefix + e.getUri(), m.queryParams(), bodyFields, bodyFormFields));
+                    endpoints.add(new EndpointOutput(e.httpMethod(), urlPrefix + e.uri(), m.queryParams(), bodyFields, bodyFormFields));
                 }
             }
         }

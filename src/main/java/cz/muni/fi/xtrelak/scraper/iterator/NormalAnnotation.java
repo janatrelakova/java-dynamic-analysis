@@ -29,7 +29,6 @@ public class NormalAnnotation implements Annotation {
     @Override
     public List<Endpoint> extractHttpConfiguration(MethodDeclaration method) throws IllegalAccessException {
         var paths = extractPath();
-        var methodName = method.getNameAsString();
         var methods = extractMethods();
         var result = new ArrayList<Endpoint>();
         for (var m : methods) {

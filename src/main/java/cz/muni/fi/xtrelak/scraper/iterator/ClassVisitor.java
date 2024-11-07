@@ -17,9 +17,7 @@ public class ClassVisitor extends GenericVisitorAdapter<ClassType, Void> {
         var endpointPrefix = getEndpointPrefix(compilationUnit);
         var methods = new ArrayList<MethodMetadata>();
         var methodVisitor = new MethodVisitor();
-        compilationUnit.getMethods().forEach(cu -> {
-            methods.add(cu.accept(methodVisitor, null));
-        });
+        compilationUnit.getMethods().forEach(cu -> methods.add(cu.accept(methodVisitor, null)));
         return new ClassType(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods);
     }
 
