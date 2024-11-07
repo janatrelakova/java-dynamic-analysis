@@ -1,8 +1,6 @@
 package cz.muni.fi.xtrelak.scraper.iterator;
 
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.expr.*;
 import cz.muni.fi.xtrelak.scraper.Endpoint;
 
 import java.util.*;

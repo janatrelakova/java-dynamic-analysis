@@ -5,19 +5,11 @@ import java.util.List;
 public class Endpoint {
 
     private final HTTP_METHOD httpMethod;
-    private String uri;
-    private final String methodName;
-    private List<String> queryParams;
+    private final String uri;
 
-
-    public Endpoint(HTTP_METHOD httpMethod, String uri, String methodName) {
+    public Endpoint(HTTP_METHOD httpMethod, String uri) {
         this.httpMethod = httpMethod;
         this.uri = uri;
-        this.methodName = methodName;
-    }
-
-    public void setQueryParams(List<String> queryParams) {
-        this.queryParams = queryParams;
     }
 
     public HTTP_METHOD getHttpMethod() {
@@ -26,17 +18,5 @@ public class Endpoint {
 
     public String getUri() {
         return uri;
-    }
-
-    public String getMethodName() {
-        return methodName;
-    }
-
-    public List<String> getQueryParams() {
-        return queryParams;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 }

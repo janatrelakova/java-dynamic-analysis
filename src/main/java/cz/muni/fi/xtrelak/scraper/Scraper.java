@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Scraper {
 
@@ -36,17 +35,17 @@ public class Scraper {
             if (c == null) {
                 continue;
             }
-            var urlPrefix = c.getEndpointPrefix();
-            for (var m : c.getMethods()) {
+            var urlPrefix = c.endpointPrefix();
+            for (var m : c.methods()) {
                 String bodyFields = null;
                 String bodyFormFields = null;
                 if (m.body() != null) {
-                    List<FieldDeclaration> q = getBodyParameters(m.body(), c.getImports(), c.getPackageName(), sourceRoot);
+                    List<FieldDeclaration> q = getBodyParameters(m.body(), c.imports(), c.packageName(), sourceRoot);
                     bodyFields = joinBodyFields(q);
                 }
 
                 if (m.formBody() != null) {
-                    List<FieldDeclaration> q = getBodyParameters(m.formBody(), c.getImports(), c.getPackageName(), sourceRoot);
+                    List<FieldDeclaration> q = getBodyParameters(m.formBody(), c.imports(), c.packageName(), sourceRoot);
                     bodyFormFields = joinBodyFormFields(q);
                 }
 

@@ -21,6 +21,6 @@ public class MarkerAnnotation implements Annotation {
     @Override
     public List<Endpoint> extractHttpConfiguration(MethodDeclaration method) throws IllegalAccessException {
         var httpMethod = HTTP_METHOD.convertAnnotationToHttpMethod(annotation.getNameAsString());
-        return List.of(new Endpoint(httpMethod, "", method.getNameAsString()));
+        return List.of(new Endpoint(httpMethod, ""));
     }
 }

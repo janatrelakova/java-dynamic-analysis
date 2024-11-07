@@ -34,7 +34,7 @@ public class NormalAnnotation implements Annotation {
         var result = new ArrayList<Endpoint>();
         for (var m : methods) {
             for (var p : paths) {
-                result.add(new Endpoint(m, p, methodName));
+                result.add(new Endpoint(m, p));
             }
         }
         return result;
