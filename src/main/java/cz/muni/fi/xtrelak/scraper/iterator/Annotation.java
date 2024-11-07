@@ -5,8 +5,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.*;
 import cz.muni.fi.xtrelak.scraper.Endpoint;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public interface Annotation {
     List<Endpoint> extractHttpConfiguration(MethodDeclaration method) throws IllegalAccessException;
@@ -20,6 +19,16 @@ public interface Annotation {
             params.add(paramName + "={" + type + "}");
         }));
         return params;
+    }
+
+    static Map<String, String> extractBody(MethodDeclaration method) {
+        var body = new HashMap<String, String>();
+        method.getParameters().forEach(parameter -> parameter.getAnnotationByName("RequestBody").ifPresent(_ -> {
+            String paramName = parameter.getNameAsString();
+            var type = parameter;
+            body.put(paramName, "type");
+        }));
+        return body;
     }
 
     static String getEndpointPrefix(MethodDeclaration method) {

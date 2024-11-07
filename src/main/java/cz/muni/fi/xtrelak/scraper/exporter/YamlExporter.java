@@ -14,7 +14,8 @@ import java.util.List;
 public class YamlExporter {
     public void export(List<Endpoint> endpoints) {
         DumperOptions options = new DumperOptions();
-        var outputEndpoints = endpoints.stream().map(endpoint -> new EndpointOutput(endpoint.httpMethod(), endpoint.uri(), endpoint.queryParams())).toList();
+        var outputEndpoints = endpoints.stream().map(endpoint ->
+                new EndpointOutput(endpoint.getHttpMethod(), endpoint.getUri(), endpoint.getQueryParams())).toList();
 
         var xd = new ArrayList<>(new HashSet<>(outputEndpoints));
 

@@ -2,6 +2,8 @@ package cz.muni.fi.xtrelak.scraper;
 
 import com.github.javaparser.utils.SourceRoot;
 import cz.muni.fi.xtrelak.scraper.exporter.YamlExporter;
+import cz.muni.fi.xtrelak.scraper.iterator.ClassType;
+import cz.muni.fi.xtrelak.scraper.iterator.ClassVisitor;
 import cz.muni.fi.xtrelak.scraper.iterator.MethodVisitor;
 
 import java.nio.file.Paths;
@@ -17,13 +19,14 @@ public class Scraper {
         // Parse all Java files in the directory
         sourceRoot.tryToParse("");
 
-        var result = new ArrayList<Endpoint>();
-        var visitor = new MethodVisitor(result);
+        var classes = new ArrayList<ClassType>();
+        var classVisitor = new ClassVisitor();
 
         sourceRoot.getCompilationUnits().forEach(cu -> {
-            cu.accept(visitor, null);
+            classes.add(cu.accept(classVisitor, null));
         });
 
+        var result = classes.stream().map(ClassType::getEndpoints).flatMap(Collection::stream).toList();
         var exporter = new YamlExporter();
         exporter.export(result);
     }

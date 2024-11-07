@@ -31,22 +31,33 @@ public class MethodVisitor extends VoidVisitorAdapter<Void> {
                 continue;
             }
 
-            try {
-                if (isSingleMemberAnnotationExpr(annotation)) {
-                    var obj = new SimpleAnnotation(annotation);
-                    endpoints.addAll(obj.extractHttpConfiguration(method));
-                } else if (isNormalAnnotationExpr(annotation)) {
-                    var obj = new NormalAnnotation(annotation);
-                    endpoints.addAll(obj.extractHttpConfiguration(method));
-                } else if (isMarkerAnnotationExpr(annotation)) {
-                    var obj = new MarkerAnnotation(annotation);
-                    endpoints.addAll(obj.extractHttpConfiguration(method));
-                } else {
-                    throw new IllegalAccessException("Invalid annotation type");
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+            var queryParams = Annotation.extractQueryParams(method);
+            var body = Annotation.extractBody(method);
+            var endpoints = parseEndpointFromAnnotation(annotation, method);
+            for (Endpoint endpoint : endpoints) {
+                endpoint.setQueryParams(queryParams);
             }
+
+            this.endpoints.addAll(endpoints);
+        }
+    }
+
+    private static List<Endpoint> parseEndpointFromAnnotation(AnnotationExpr annotation, MethodDeclaration method) {
+        try {
+            if (isSingleMemberAnnotationExpr(annotation)) {
+                var obj = new SimpleAnnotation(annotation);
+                return obj.extractHttpConfiguration(method);
+            } else if (isNormalAnnotationExpr(annotation)) {
+                var obj = new NormalAnnotation(annotation);
+                return obj.extractHttpConfiguration(method);
+            } else if (isMarkerAnnotationExpr(annotation)) {
+                var obj = new MarkerAnnotation(annotation);
+                return obj.extractHttpConfiguration(method);
+            } else {
+                throw new IllegalAccessException("Invalid annotation type");
+            }
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
