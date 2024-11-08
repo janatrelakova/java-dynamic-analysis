@@ -1,6 +1,6 @@
-package cz.muni.fi.xtrelak.controller;
+package com.example.project.controller;
 
-import cz.muni.fi.xtrelak.model.User;
+import com.example.project.model.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

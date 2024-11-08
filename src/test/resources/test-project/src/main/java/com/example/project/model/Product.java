@@ -1,4 +1,4 @@
-package cz.muni.fi.xtrelak.model;
+package com.example.project.model;
 
 public class Product {
     private String name;
