@@ -1,6 +1,8 @@
 package com.example.project.controller;
 
+import com.example.project.model.Product;
 import com.example.project.model.User;
+import com.example.project.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -8,15 +10,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private final UserService userService = new UserService();
 
     @GetMapping("/search")
-    public String searchUser(@RequestParam String username, @RequestParam int age) {
-        return "Searching user: " + username + " with age: " + age;
+    public User searchUser(@RequestParam String username, @RequestParam int age) {
+        return userService.getUserByNameAndAge(username, age);
     }
 
     @PostMapping("/add")
     public String addUser(@RequestBody User user) {
-        return "User added: " + user.getName() + ", Age: " + user.getAge();
+        return userService.addUser(user);
     }
 
     @GetMapping(value = { "/greet", "/hello"})
@@ -26,11 +29,16 @@ public class UserController {
 
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     public List<String> getUsers() {
-        return List.of("User1", "User2", "User3");
+        return userService.getUserIds();
     }
 
     @RequestMapping(value = {"/updateUserSomehow"}, method = { RequestMethod.PUT, RequestMethod.PATCH })
     public String updateUser(@RequestBody User user) {
         return "User updated: " + user.getName() + ", Age: " + user.getAge();
+    }
+
+    @RequestMapping(value = "/{id}/products", method = RequestMethod.GET)
+    public List<Product> getUserProducts(@PathVariable("id") int id) {
+        return userService.getUserProducts(id);
     }
 }
