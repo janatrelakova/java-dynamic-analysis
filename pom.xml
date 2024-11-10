@@ -34,7 +34,7 @@
                             </descriptors>
                             <archive>
                                 <manifestEntries>
-                                    <Main-Class>cz/muni/fi/xtrelak/injector/Injector</Main-Class> <!-- Set your main class here -->
+                                    <Premain-Class>cz.muni.fi.xtrelak.injector.Injector</Premain-Class>
                                 </manifestEntries>
                             </archive>
                         </configuration>
@@ -97,6 +97,11 @@
             <artifactId>junit-jupiter-engine</artifactId>
             <version>5.11.3</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.15.1</version>
         </dependency>
     </dependencies>
 </project>

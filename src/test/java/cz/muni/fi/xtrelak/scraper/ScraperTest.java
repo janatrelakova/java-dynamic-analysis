@@ -31,11 +31,24 @@ public class ScraperTest {
         var expected = """
                 - body: null
                   formBody: null
+                  httpMethod: null
+                  url: /constructs/test
+                - body: null
+                  formBody: null
+                  httpMethod: null
+                  url: /constructs/testAbstract
+                - body: null
+                  formBody: null
+                  httpMethod: null
+                  url: /constructs/testBean
+                - body: null
+                  formBody: null
                   httpMethod: GET
                   url: /products
                 - body: |-
-                    name: String
                     price: double
+                    name: String
+                    id: int
                   formBody: null
                   httpMethod: POST
                   url: /products
@@ -44,8 +57,9 @@ public class ScraperTest {
                   httpMethod: GET
                   url: /products/{id}
                 - body: |-
-                    name: String
                     price: double
+                    name: String
+                    id: int
                   formBody: null
                   httpMethod: PUT
                   url: /products/{id}
@@ -87,6 +101,10 @@ public class ScraperTest {
                   formBody: null
                   httpMethod: PATCH
                   url: /users/updateUserSomehow
+                - body: null
+                  formBody: null
+                  httpMethod: GET
+                  url: /users/{id}/products
                 """;
 
         assertEquals(expected, outputStream.toString());
