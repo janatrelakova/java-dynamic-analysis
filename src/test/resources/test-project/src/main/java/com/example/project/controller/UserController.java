@@ -13,7 +13,7 @@ public class UserController {
     private final UserService userService = new UserService();
 
     @GetMapping("/search")
-    public User searchUser(@RequestParam String username, @RequestParam int age) {
+    public User searchUser(@RequestParam("username") String username, @RequestParam("age") int age) {
         return userService.getUserByNameAndAge(username, age);
     }
 

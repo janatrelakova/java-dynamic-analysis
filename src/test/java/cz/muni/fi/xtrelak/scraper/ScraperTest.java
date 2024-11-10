@@ -29,82 +29,84 @@ public class ScraperTest {
     public void testMain() throws Exception {
         Scraper.main(new String[]{"src/test/resources/test-project"});
         var expected = """
-                - body: null
-                  formBody: null
-                  httpMethod: null
-                  url: /constructs/test
-                - body: null
-                  formBody: null
-                  httpMethod: null
-                  url: /constructs/testAbstract
-                - body: null
-                  formBody: null
-                  httpMethod: null
-                  url: /constructs/testBean
-                - body: null
-                  formBody: null
-                  httpMethod: GET
-                  url: /products
-                - body: |-
-                    price: double
-                    name: String
-                    id: int
-                  formBody: null
-                  httpMethod: POST
-                  url: /products
-                - body: null
-                  formBody: null
-                  httpMethod: GET
-                  url: /products/{id}
-                - body: |-
-                    price: double
-                    name: String
-                    id: int
-                  formBody: null
-                  httpMethod: PUT
-                  url: /products/{id}
-                - body: null
-                  formBody: null
-                  httpMethod: DELETE
-                  url: /products/{id}
-                - body: |-
-                    name: String
-                    age: int
-                  formBody: null
-                  httpMethod: POST
-                  url: /users/add
-                - body: null
-                  formBody: name=String&age=int
-                  httpMethod: GET
-                  url: /users/greet
-                - body: null
-                  formBody: name=String&age=int
-                  httpMethod: GET
-                  url: /users/hello
-                - body: null
-                  formBody: null
-                  httpMethod: GET
-                  url: /users/list
-                - body: null
-                  formBody: null
-                  httpMethod: GET
-                  url: /users/search?username={String}&age={int}
-                - body: |-
-                    name: String
-                    age: int
-                  formBody: null
-                  httpMethod: PUT
-                  url: /users/updateUserSomehow
-                - body: |-
-                    name: String
-                    age: int
-                  formBody: null
-                  httpMethod: PATCH
-                  url: /users/updateUserSomehow
-                - body: null
-                  formBody: null
-                  httpMethod: GET
-                  url: /users/{id}/products
+                endpoints:
+                  - url: "/constructs/test"
+                    httpMethod: null
+                    body: null
+                    formBody: null
+                  - url: "/constructs/testAbstract"
+                    httpMethod: null
+                    body: null
+                    formBody: null
+                  - url: "/constructs/testBean"
+                    httpMethod: null
+                    body: null
+                    formBody: null
+                  - url: "/products"
+                    httpMethod: "GET"
+                    body: null
+                    formBody: null
+                  - url: "/products"
+                    httpMethod: "POST"
+                    body:
+                    - "price: double"
+                    - "name: String"
+                    - "id: int"
+                    formBody: null
+                  - url: "/products/{id}"
+                    httpMethod: "GET"
+                    body: null
+                    formBody: null
+                  - url: "/products/{id}"
+                    httpMethod: "PUT"
+                    body:
+                    - "price: double"
+                    - "name: String"
+                    - "id: int"
+                    formBody: null
+                  - url: "/products/{id}"
+                    httpMethod: "DELETE"
+                    body: null
+                    formBody: null
+                  - url: "/users/add"
+                    httpMethod: "POST"
+                    body:
+                    - "name: String"
+                    - "age: int"
+                    formBody: null
+                  - url: "/users/greet"
+                    httpMethod: "GET"
+                    body: null
+                    formBody: "name=String&age=int"
+                  - url: "/users/hello"
+                    httpMethod: "GET"
+                    body: null
+                    formBody: "name=String&age=int"
+                  - url: "/users/list"
+                    httpMethod: "GET"
+                    body: null
+                    formBody: null
+                  - url: "/users/search?username={String}&age={int}"
+                    httpMethod: "GET"
+                    body: null
+                    formBody: null
+                  - url: "/users/updateUserSomehow"
+                    httpMethod: "PUT"
+                    body:
+                    - "name: String"
+                    - "age: int"
+                    formBody: null
+                  - url: "/users/updateUserSomehow"
+                    httpMethod: "PATCH"
+                    body:
+                    - "name: String"
+                    - "age: int"
+                    formBody: null
+                  - url: "/users/{id}/products"
+                    httpMethod: "GET"
+                    body: null
+                    formBody: null
+                
                 """;
 
         assertEquals(expected, outputStream.toString());

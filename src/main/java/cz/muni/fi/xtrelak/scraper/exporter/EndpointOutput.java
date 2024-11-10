@@ -8,10 +8,10 @@ public class EndpointOutput
 {
     public String url;
     public HTTP_METHOD httpMethod;
-    public String body;
+    public List<String> body;
     public String formBody;
 
-    public EndpointOutput(HTTP_METHOD httpMethod, String uri, List<String> queryParams, String body, String formBody) {
+    public EndpointOutput(HTTP_METHOD httpMethod, String uri, List<String> queryParams, List<String> body, String formBody) {
         this.httpMethod = httpMethod;
         if (queryParams == null || queryParams.isEmpty()) {
             this.url = uri;

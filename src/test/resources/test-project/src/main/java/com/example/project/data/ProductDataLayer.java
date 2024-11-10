@@ -24,15 +24,7 @@ public class ProductDataLayer {
                 .orElse(null);
     }
 
-    public Product getProductByName(String name) {
-        return products.stream()
-                .filter(product -> product.name().equals(name))
-                .findFirst()
-                .orElse(null);
-    }
-
     public String addProduct(Product product) {
-        products.add(product);
-        return product.name();
+        return "Product added: " + product.name();
     }
 }
