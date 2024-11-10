@@ -41,7 +41,7 @@ public class Scraper {
             }
             var urlPrefix = c.endpointPrefix();
             for (var m : c.methods()) {
-                String bodyFields = null;
+                List<String> bodyFields = null;
                 String bodyFormFields = null;
                 if (m.body() != null) {
                     Map<String, String> q = getBodyParameters(m.body(), c.imports(), c.packageName(), sourceRoot);
@@ -63,8 +63,8 @@ public class Scraper {
         exporter.export(endpoints);
     }
 
-    private static String joinBodyFields(Map<String, String> q) {
-        return q.keySet().stream().map(e -> e + ": " + q.get(e)).collect(Collectors.joining("\n"));
+    private static List<String> joinBodyFields(Map<String, String> q) {
+        return q.keySet().stream().map(e -> e + ": " + q.get(e)).toList();
     }
 
     private static String joinBodyFormFields(Map<String, String> q) {
