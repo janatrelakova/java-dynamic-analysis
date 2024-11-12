@@ -39,7 +39,6 @@
                             </archive>
                         </configuration>
                     </execution>
-                    <!-- Assembly for endpointsScraper JAR -->
                     <execution>
                         <id>create-scraper-jar</id>
                         <phase>package</phase>
@@ -52,26 +51,7 @@
                             </descriptors>
                             <archive>
                                 <manifestEntries>
-                                    <Main-Class>cz/muni/fi/xtrelak/scraper/Scraper</Main-Class> <!-- Set your main class here -->
-                                </manifestEntries>
-                            </archive>
-                        </configuration>
-                    </execution>
-
-                    <!-- Assembly for invoker JAR -->
-                    <execution>
-                        <id>create-invoker-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <descriptors>
-                                <descriptor>src/main/assembly/invoker.xml</descriptor>
-                            </descriptors>
-                            <archive>
-                                <manifestEntries>
-                                    <Main-Class>cz/muni/fi/xtrelak/invoker/Invoker</Main-Class> <!-- Set your main class here -->
+                                    <Main-Class>cz/muni/fi/xtrelak/scraper/Scraper</Main-Class>
                                 </manifestEntries>
                             </archive>
                         </configuration>
