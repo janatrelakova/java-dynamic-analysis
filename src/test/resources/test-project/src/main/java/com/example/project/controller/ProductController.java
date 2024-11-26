@@ -2,6 +2,7 @@ package com.example.project.controller;
 
 import com.example.project.model.Product;
 import com.example.project.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -49,6 +50,6 @@ public class ProductController {
 
     @GetMapping("/valid/{id}")
     public boolean isProductValid(@Valid Product product) {
-        return productService.isProductValid(id);
+        return true;
     }
 }
