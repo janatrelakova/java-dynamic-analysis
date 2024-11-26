@@ -7,6 +7,7 @@ import com.github.javaparser.utils.SourceRoot;
 import cz.muni.fi.xtrelak.scraper.exporter.YamlExporter;
 import cz.muni.fi.xtrelak.scraper.iterator.ClassMetadata;
 import cz.muni.fi.xtrelak.scraper.iterator.ClassVisitor;
+import cz.muni.fi.xtrelak.scraper.iterator.RecordVisitor;
 
 import java.nio.file.Paths;
 import java.util.*;
@@ -26,8 +27,12 @@ public class Scraper {
 
         var classes = new ArrayList<ClassMetadata>();
         var classVisitor = new ClassVisitor();
+        var recordVisitor = new RecordVisitor();
 
-        cus.forEach(cu -> cu.ifSuccessful(c -> classes.add(c.accept(classVisitor, null))));
+        cus.forEach(cu -> cu.ifSuccessful(c -> {
+            classes.add(c.accept(recordVisitor, null));
+            classes.add(c.accept(classVisitor, null));
+        }));
         var result = EndpointAggregator.aggregate(classes, sourceRoot);
 
         var exporter = new YamlExporter();
