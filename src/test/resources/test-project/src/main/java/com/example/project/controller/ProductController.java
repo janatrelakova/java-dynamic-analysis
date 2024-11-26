@@ -46,4 +46,9 @@ public class ProductController {
     public String updateProductPartially(@PathVariable("id") int id, @RequestBody Product product) {
         return "Product with ID " + id + " updated with new name: " + product.name() + " and price: " + product.price();
     }
+
+    @GetMapping("/valid/{id}")
+    public boolean isProductValid(@Valid Product product) {
+        return productService.isProductValid(id);
+    }
 }

@@ -18,7 +18,7 @@ public class ClassVisitor extends GenericVisitorAdapter<ClassMetadata, Void> {
         var methods = new ArrayList<MethodMetadata>();
         var methodVisitor = new MethodVisitor();
         compilationUnit.getMethods().forEach(cu -> methods.add(cu.accept(methodVisitor, null)));
-        return new ClassMetadata(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods);
+        return new ClassMetadata(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods, null);
     }
 
     private static String getEndpointPrefix(ClassOrInterfaceDeclaration c) {
