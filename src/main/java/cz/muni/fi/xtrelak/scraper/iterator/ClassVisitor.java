@@ -28,9 +28,7 @@ public class ClassVisitor extends GenericVisitorAdapter<ClassMetadata, Void> {
 
     private static Map<String, String> getPublicFields(ClassOrInterfaceDeclaration c) {
         var publicFields = new HashMap<String, String>();
-        c.getFields().forEach(f -> {
-            publicFields.put(f.getVariable(0).getNameAsString(), f.getVariable(0).getTypeAsString());
-        });
+        c.getFields().forEach(f -> publicFields.put(f.getVariable(0).getNameAsString(), f.getVariable(0).getTypeAsString()));
         return publicFields;
     }
 

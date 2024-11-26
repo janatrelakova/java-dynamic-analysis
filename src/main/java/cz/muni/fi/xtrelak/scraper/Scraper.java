@@ -33,7 +33,7 @@ public class Scraper {
             classes.add(c.accept(recordVisitor, null));
             classes.add(c.accept(classVisitor, null));
         }));
-        var result = EndpointAggregator.aggregate(classes, sourceRoot);
+        var result = EndpointAggregator.aggregate(classes);
 
         var exporter = new YamlExporter();
         exporter.export(result);

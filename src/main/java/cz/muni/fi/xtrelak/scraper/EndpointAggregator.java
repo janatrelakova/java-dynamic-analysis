@@ -1,90 +1,105 @@
 package cz.muni.fi.xtrelak.scraper;
 
-import com.github.javaparser.utils.SourceRoot;
 import cz.muni.fi.xtrelak.scraper.exporter.EndpointOutput;
 import cz.muni.fi.xtrelak.scraper.iterator.ClassMetadata;
+import cz.muni.fi.xtrelak.scraper.iterator.MethodMetadata;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class EndpointAggregator {
-    public static List<EndpointOutput> aggregate(List<ClassMetadata> classes, SourceRoot sourceRoot) {
+    public static List<EndpointOutput> aggregate(List<ClassMetadata> classes) {
         var endpoints = new ArrayList<EndpointOutput>();
 
         for (var c : classes) {
             if (c == null) {
                 continue;
             }
+
             var urlPrefix = c.endpointPrefix();
             for (var m : c.methods()) {
-                List<String> bodyFields = null;
-                String bodyFormFields = null;
-                if (m.body() != null) {
-                    Map<String, String> q = getBodyParameters(m.body(), c.imports(), c.packageName(), sourceRoot);
-                    bodyFields = joinBodyFields(q);
-                }
-
-                if (m.formBody() != null) {
-                    Map<String, String> q = getBodyParameters(m.formBody(), c.imports(), c.packageName(), sourceRoot);
-                    bodyFormFields = joinBodyFormFields(q);
-                }
+                var params = analyzeMethodParameters(m, c, classes);
 
                 for (var e : m.endpoints()) {
-                    endpoints.add(new EndpointOutput(e.httpMethod(), urlPrefix + e.uri(), m.queryParams(), bodyFields, bodyFormFields));
+                    var qm = new ArrayList<String>();
+                    if (params.query != null) {
+                        qm.addAll(params.query);
+                    }
+                    if (m.queryParams() != null) {
+                        qm.addAll(m.queryParams());
+                    }
+                    endpoints.add(new EndpointOutput(e.httpMethod(), urlPrefix + e.uri(), qm, params.body));
                 }
             }
         }
         return endpoints;
     }
 
+    private record RequestParameter(List<String> body, List<String> query) {}
+
+    private static RequestParameter analyzeMethodParameters(MethodMetadata method, ClassMetadata cm, List<ClassMetadata> classes) {
+        var parameters = method.param();
+        if (parameters == null) {
+            return new RequestParameter(null, null);
+        }
+
+
+        List<String> body = null;
+        List<String> query = null;
+        for (var p : parameters) {
+            var type = p.getTypeAsString();
+            var fields = lookForFields(type, classes, cm);
+
+            var annotations = p.getAnnotations();
+            if (annotations.isEmpty() && !fields.isEmpty()) {
+                query = joinQueryParamsFields(fields);
+            }
+
+            for (var a : annotations) {
+                var annotation = a.getNameAsString();
+                if (annotation.startsWith("ModelAttribute")) {
+                    query = joinQueryParamsFields(fields);
+                }
+
+                if (annotation.startsWith("RequestBody")) {
+                    body = joinBodyFields(fields);
+                }
+            }
+
+            if (body != null && query != null) {
+                break;
+            }
+        }
+
+        return new RequestParameter(body, query);
+    }
+
+    private static Map<String, String> lookForFields(String typeName, List<ClassMetadata> classes, ClassMetadata cm) {
+        // case when the type is not imported but located in the same package
+        var localPackage = cm.packageName();
+        var localType = classes.stream().filter(c -> c != null && c.name().equals(typeName) && c.packageName().equals(localPackage)).toList();
+        if (localType.size() == 1) {
+            return localType.getFirst().publicFields();
+        }
+
+        // case when type is imported
+        var importedPackage = cm.imports().stream().filter(i -> i.endsWith(typeName)).findFirst();
+        if (importedPackage.isPresent()) {
+            var importString = importedPackage.orElseThrow();
+            var pkg = importString.substring(0, importString.lastIndexOf('.'));
+            var foundClass = classes.stream().filter(c -> c!= null && c.name().equals(typeName) && c.packageName().equals(pkg)).findFirst();
+            if (foundClass.isPresent()) {
+                return foundClass.get().publicFields();
+            }
+        }
+
+        return new HashMap<>();
+    }
+
     private static List<String> joinBodyFields(Map<String, String> q) {
         return q.keySet().stream().map(e -> e + ": " + q.get(e)).toList();
     }
 
-    private static String joinBodyFormFields(Map<String, String> q) {
-        return q.keySet().stream().map(e -> e + "=" + q.get(e)).collect(Collectors.joining("&"));
+    private static List<String> joinQueryParamsFields(Map<String, String> q) {
+        return q.keySet().stream().map(e -> e + "={" + q.get(e) + "}").toList();
     }
-
-    private static Map<String, String> getBodyParameters(String body, List<String> imports, String packageName, SourceRoot sr) {
-        var imported = imports.stream().filter(i -> i.endsWith(body)).findFirst();
-        if (imported.isPresent()) {
-            var importString = imported.orElseThrow();
-            var pkg = importString.substring(0, importString.lastIndexOf('.'));
-            return getFieldsOfClass(pkg, body, sr);
-        }
-
-        return getFieldsOfClass(packageName, body, sr);
-    }
-
-
-    private static Map<String, String> getFieldsOfClass(String packageName, String body, SourceRoot sr) {
-        var location = "src/main/java/" + packageName;
-        var result = new HashMap<String, String>();
-        try {
-            var classOfBody = sr.tryToParse(location, body + ".java");
-            if (classOfBody.isSuccessful()) {
-                var type = classOfBody.getResult().get().getPrimaryType();
-                if (type.get().isRecordDeclaration()) {
-                    var record = type.get().asRecordDeclaration();
-                    var parameters = record.getParameters();
-                    parameters.forEach(e -> {
-                        result.put(e.getNameAsString(), e.getType().asString());
-                    });
-                } else {
-                    type.get().asClassOrInterfaceDeclaration().getFields().forEach(e -> {
-                        result.put(e.getVariable(0).getNameAsString(), e.getVariable(0).getType().asString());
-                    });
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return result;
-    }
-
 }
