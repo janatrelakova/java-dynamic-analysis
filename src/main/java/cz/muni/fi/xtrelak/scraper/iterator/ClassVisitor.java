@@ -6,6 +6,8 @@ import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClassVisitor extends GenericVisitorAdapter<ClassMetadata, Void> {
     @Override
@@ -15,10 +17,19 @@ public class ClassVisitor extends GenericVisitorAdapter<ClassMetadata, Void> {
         var imports = parentNode.findAll(com.github.javaparser.ast.ImportDeclaration.class).stream().map(NodeWithName::getNameAsString).toList();
         var packageName = parentNode.findFirst(com.github.javaparser.ast.PackageDeclaration.class).orElseThrow().getNameAsString();
         var endpointPrefix = getEndpointPrefix(compilationUnit);
+        var publicFields = getPublicFields(compilationUnit);
+
         var methods = new ArrayList<MethodMetadata>();
         var methodVisitor = new MethodVisitor();
         compilationUnit.getMethods().forEach(cu -> methods.add(cu.accept(methodVisitor, null)));
-        return new ClassMetadata(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods);
+
+        return new ClassMetadata(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods, publicFields);
+    }
+
+    private static Map<String, String> getPublicFields(ClassOrInterfaceDeclaration c) {
+        var publicFields = new HashMap<String, String>();
+        c.getFields().forEach(f -> publicFields.put(f.getVariable(0).getNameAsString(), f.getVariable(0).getTypeAsString()));
+        return publicFields;
     }
 
     private static String getEndpointPrefix(ClassOrInterfaceDeclaration c) {

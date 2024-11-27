@@ -6,6 +6,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
+import com.github.javaparser.ast.nodeTypes.NodeWithType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
 import cz.muni.fi.xtrelak.scraper.Endpoint;
@@ -33,15 +34,16 @@ public class MethodVisitor extends GenericVisitorAdapter<MethodMetadata, Void> {
         }
 
         if (endpoints.isEmpty()) {
-            return new MethodMetadata(endpoints, null, null, null);
+            return new MethodMetadata(endpoints, null, null, null, null);
         }
         var queryParams = extractQueryParams(method);
         var body = extractBodyType(method);
         var bodyString = body == null ? null : body.asString();
         var formBody = extractFormBodyType(method);
         var formBodyString = formBody == null ? null : formBody.asString();
+        var parameters = method.getParameters().stream().toList();
 
-        return new MethodMetadata(endpoints, bodyString, formBodyString, queryParams);
+        return new MethodMetadata(endpoints, bodyString, formBodyString, queryParams, parameters);
     }
 
     private static List<Endpoint> parseEndpointFromAnnotation(AnnotationExpr annotation, MethodDeclaration method) {

@@ -33,79 +33,66 @@ public class ScraperTest {
                   - url: "/constructs/test"
                     httpMethod: null
                     body: null
-                    formBody: null
                   - url: "/constructs/testAbstract"
                     httpMethod: null
                     body: null
-                    formBody: null
                   - url: "/constructs/testBean"
                     httpMethod: null
                     body: null
-                    formBody: null
                   - url: "/products"
                     httpMethod: "GET"
                     body: null
-                    formBody: null
                   - url: "/products"
                     httpMethod: "POST"
                     body:
                     - "price: double"
                     - "name: String"
                     - "id: int"
-                    formBody: null
+                  - url: "/products/valid/{id}"
+                    httpMethod: "GET"
+                    body: null
                   - url: "/products/{id}"
                     httpMethod: "GET"
                     body: null
-                    formBody: null
                   - url: "/products/{id}"
                     httpMethod: "PUT"
                     body:
                     - "price: double"
                     - "name: String"
                     - "id: int"
-                    formBody: null
                   - url: "/products/{id}"
                     httpMethod: "DELETE"
                     body: null
-                    formBody: null
                   - url: "/users/add"
                     httpMethod: "POST"
                     body:
                     - "name: String"
                     - "age: int"
-                    formBody: null
-                  - url: "/users/greet"
+                  - url: "/users/greet?name={String}&age={int}"
                     httpMethod: "GET"
                     body: null
-                    formBody: "name=String&age=int"
-                  - url: "/users/hello"
+                  - url: "/users/hello?name={String}&age={int}"
                     httpMethod: "GET"
                     body: null
-                    formBody: "name=String&age=int"
                   - url: "/users/list"
                     httpMethod: "GET"
                     body: null
-                    formBody: null
                   - url: "/users/search?username={String}&age={int}"
                     httpMethod: "GET"
                     body: null
-                    formBody: null
                   - url: "/users/updateUserSomehow"
                     httpMethod: "PUT"
                     body:
                     - "name: String"
                     - "age: int"
-                    formBody: null
                   - url: "/users/updateUserSomehow"
                     httpMethod: "PATCH"
                     body:
                     - "name: String"
                     - "age: int"
-                    formBody: null
                   - url: "/users/{id}/products"
                     httpMethod: "GET"
                     body: null
-                    formBody: null
                 
                 """;
 

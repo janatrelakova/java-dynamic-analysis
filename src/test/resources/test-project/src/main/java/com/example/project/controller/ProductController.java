@@ -2,6 +2,7 @@ package com.example.project.controller;
 
 import com.example.project.model.Product;
 import com.example.project.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,5 +46,10 @@ public class ProductController {
     @PatchMapping("/{id}")
     public String updateProductPartially(@PathVariable("id") int id, @RequestBody Product product) {
         return "Product with ID " + id + " updated with new name: " + product.name() + " and price: " + product.price();
+    }
+
+    @GetMapping("/valid/{id}")
+    public boolean isProductValid(@Valid Product product) {
+        return true;
     }
 }

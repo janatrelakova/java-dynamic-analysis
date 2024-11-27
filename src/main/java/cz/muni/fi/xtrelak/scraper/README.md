@@ -1,4 +1,5 @@
 # Scraper
+
 This project is suited for Spring applications that are using following annotations approach:
 - `@GetMapping`, `@PostMapping`, `@PutMapping`, `@DeleteMapping`, `@PatchMapping`
   - supported as a method level annotation
@@ -26,62 +27,76 @@ This project is suited for Spring applications that are using following annotati
 
 For example, for [test project](../../../../../../../test/resources/test-project) the output is:
 ```yaml
-- body: null
-  formBody: null
-  httpMethod: GET
-  url: /products
-- body: |-
-    name: String
-    price: double
-  formBody: null
-  httpMethod: POST
-  url: /products
-- body: null
-  formBody: null
-  httpMethod: GET
-  url: /products/{id}
-- body: |-
-    name: String
-    price: double
-  formBody: null
-  httpMethod: PUT
-  url: /products/{id}
-- body: null
-  formBody: null
-  httpMethod: DELETE
-  url: /products/{id}
-- body: |-
-    name: String
-    age: int
-  formBody: null
-  httpMethod: POST
-  url: /users/add
-- body: null
-  formBody: name=String&age=int
-  httpMethod: GET
-  url: /users/greet
-- body: null
-  formBody: name=String&age=int
-  httpMethod: GET
-  url: /users/hello
-- body: null
-  formBody: null
-  httpMethod: GET
-  url: /users/list
-- body: null
-  formBody: null
-  httpMethod: GET
-  url: /users/search?username={String}&age={int}
-- body: |-
-    name: String
-    age: int
-  formBody: null
-  httpMethod: PUT
-  url: /users/updateUserSomehow
-- body: |-
-    name: String
-    age: int
-  formBody: null
-  httpMethod: PATCH
-  url: /users/updateUserSomehow
+endpoints:
+  - url: "/constructs/test"
+    httpMethod: null
+    body: null
+  - url: "/constructs/testAbstract"
+    httpMethod: null
+    body: null
+  - url: "/constructs/testBean"
+    httpMethod: null
+    body: null
+  - url: "/products"
+    httpMethod: "GET"
+    body: null
+  - url: "/products"
+    httpMethod: "POST"
+    body:
+      - "price: double"
+      - "name: String"
+      - "id: int"
+  - url: "/products/valid/{id}"
+    httpMethod: "GET"
+    body: null
+  - url: "/products/{id}"
+    httpMethod: "GET"
+    body: null
+  - url: "/products/{id}"
+    httpMethod: "PUT"
+    body:
+      - "price: double"
+      - "name: String"
+      - "id: int"
+  - url: "/products/{id}"
+    httpMethod: "DELETE"
+    body: null
+  - url: "/users/add"
+    httpMethod: "POST"
+    body:
+      - "name: String"
+      - "age: int"
+  - url: "/users/greet?name={String}&age={int}"
+    httpMethod: "GET"
+    body: null
+  - url: "/users/hello?name={String}&age={int}"
+    httpMethod: "GET"
+    body: null
+  - url: "/users/list"
+    httpMethod: "GET"
+    body: null
+  - url: "/users/search?username={String}&age={int}"
+    httpMethod: "GET"
+    body: null
+  - url: "/users/updateUserSomehow"
+    httpMethod: "PUT"
+    body:
+      - "name: String"
+      - "age: int"
+  - url: "/users/updateUserSomehow"
+    httpMethod: "PATCH"
+    body:
+      - "name: String"
+      - "age: int"
+  - url: "/users/{id}/products"
+    httpMethod: "GET"
+    body: null
 ```
+
+## Known limitations
+1. The scraper is targeted on Spring projects using annotations listed below.
+2. Body and query params imported from outer packages are not recognized.
+3. Body and query params imported as aliases may not be recognized.
+4. The scraper works strictly statically, so it does not recognize the endpoints 
+    that are created dynamically in any way.
+5. If there are multiple definitions of body or query params, the result may not be correct.
