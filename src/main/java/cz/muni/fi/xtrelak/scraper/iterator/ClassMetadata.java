@@ -8,6 +8,6 @@ public record ClassMetadata(String name,
                             String endpointPrefix,
                             List<String> imports,
                             List<MethodMetadata> methods,
-                            Map<String, String> publicFields) {
+                            Map<String, String> constructorFields) {
 
 }

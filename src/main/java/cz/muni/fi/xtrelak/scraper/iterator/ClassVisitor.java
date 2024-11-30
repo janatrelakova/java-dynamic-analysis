@@ -1,6 +1,9 @@
 package cz.muni.fi.xtrelak.scraper.iterator;
 
+import com.github.javaparser.ast.ImportDeclaration;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.*;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.visitor.GenericVisitorAdapter;
@@ -14,22 +17,23 @@ public class ClassVisitor extends GenericVisitorAdapter<ClassMetadata, Void> {
     public ClassMetadata visit(com.github.javaparser.ast.body.ClassOrInterfaceDeclaration compilationUnit, Void arg) {
         super.visit(compilationUnit, arg);
         var parentNode = compilationUnit.getParentNode().orElseThrow();
-        var imports = parentNode.findAll(com.github.javaparser.ast.ImportDeclaration.class).stream().map(NodeWithName::getNameAsString).toList();
-        var packageName = parentNode.findFirst(com.github.javaparser.ast.PackageDeclaration.class).orElseThrow().getNameAsString();
+        var imports = parentNode.findAll(ImportDeclaration.class).stream().map(NodeWithName::getNameAsString).toList();
+        var packageName = parentNode.findFirst(PackageDeclaration.class).orElseThrow().getNameAsString();
         var endpointPrefix = getEndpointPrefix(compilationUnit);
-        var publicFields = getPublicFields(compilationUnit);
+        var constructorFields = getConstructorFields(compilationUnit);
 
         var methods = new ArrayList<MethodMetadata>();
         var methodVisitor = new MethodVisitor();
         compilationUnit.getMethods().forEach(cu -> methods.add(cu.accept(methodVisitor, null)));
 
-        return new ClassMetadata(compilationUnit.getNameAsString(), packageName, endpointPrefix, imports, methods, publicFields);
-    }
-
-    private static Map<String, String> getPublicFields(ClassOrInterfaceDeclaration c) {
-        var publicFields = new HashMap<String, String>();
-        c.getFields().forEach(f -> publicFields.put(f.getVariable(0).getNameAsString(), f.getVariable(0).getTypeAsString()));
-        return publicFields;
+        return new ClassMetadata(
+                compilationUnit.getNameAsString(),
+                packageName,
+                endpointPrefix,
+                imports,
+                methods,
+                constructorFields
+        );
     }
 
     private static String getEndpointPrefix(ClassOrInterfaceDeclaration c) {
@@ -77,5 +81,14 @@ public class ClassVisitor extends GenericVisitorAdapter<ClassMetadata, Void> {
         }
 
         throw new IllegalArgumentException("Invalid annotation type for RequestMapping on class level");
+    }
+
+    private static Map<String, String> getConstructorFields(ClassOrInterfaceDeclaration c) {
+        var fields = c.getConstructors().stream().flatMap(u -> u.getParameters().stream()).distinct().toList();
+        var constructorFields = new HashMap<String, String>();
+        for (Parameter p : fields) {
+            constructorFields.put(p.getNameAsString(), p.getTypeAsString());
+        }
+        return constructorFields;
     }
 }
