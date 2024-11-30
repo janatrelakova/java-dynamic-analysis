@@ -15,7 +15,6 @@ public class RecordVisitor extends GenericVisitorAdapter<ClassMetadata, Void> {
         var packageName = parentNode.findFirst(com.github.javaparser.ast.PackageDeclaration.class).orElseThrow().getNameAsString();
         var imports = parentNode.findAll(com.github.javaparser.ast.ImportDeclaration.class).stream().map(NodeWithName::getNameAsString).toList();
 
-
         var publicFields = new HashMap<String, String>();
         var parameters = record.getParameters();
         parameters.forEach(f -> publicFields.put(f.getNameAsString(), f.getType().asString()));

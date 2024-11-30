@@ -63,6 +63,10 @@ public class EndpointAggregator {
                 if (annotation.startsWith("RequestBody")) {
                     body = joinBodyFields(fields);
                 }
+
+                if (annotation.startsWith("Valid")) {
+                    query = joinQueryParamsFields(fields);
+                }
             }
 
             if (body != null && query != null) {
@@ -78,7 +82,7 @@ public class EndpointAggregator {
         var localPackage = cm.packageName();
         var localType = classes.stream().filter(c -> c != null && c.name().equals(typeName) && c.packageName().equals(localPackage)).toList();
         if (localType.size() == 1) {
-            return localType.getFirst().publicFields();
+            return localType.getFirst().constructorFields();
         }
 
         // case when type is imported
@@ -88,7 +92,7 @@ public class EndpointAggregator {
             var pkg = importString.substring(0, importString.lastIndexOf('.'));
             var foundClass = classes.stream().filter(c -> c!= null && c.name().equals(typeName) && c.packageName().equals(pkg)).findFirst();
             if (foundClass.isPresent()) {
-                return foundClass.get().publicFields();
+                return foundClass.get().constructorFields();
             }
         }
 
